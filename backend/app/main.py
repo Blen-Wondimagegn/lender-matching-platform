@@ -73,6 +73,11 @@ def get_lenders(db: Session = Depends(get_db)):
 def get_lender_programs(db: Session = Depends(get_db)):
     return crud.get_lender_programs(db)
 
+@app.get("/match-results")
+def get_match_results(
+    db: Session = Depends(get_db)
+):
+    return crud.get_match_results(db)
 
 @app.get("/loan-requests")
 def get_loan_requests(db: Session = Depends(get_db)):
@@ -122,7 +127,19 @@ def run_underwriting(
             restrictions
         )
 
+        rejection_reason = "; ".join(result["reasons"])
+
+        saved_result = crud.create_match_result(
+            db=db,
+            loan_request_id=loan_request_id,
+            program_id=program.id,
+            eligible=result["eligible"],
+            fit_score=result["fit_score"],
+            rejection_reason=rejection_reason
+        )
+
         results.append({
+            "match_result_id": saved_result.id,
             "program_id": program.id,
             "program_name": program.name,
             "eligible": result["eligible"],

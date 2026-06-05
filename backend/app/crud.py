@@ -104,3 +104,27 @@ def get_restrictions_by_program_id(db: Session, program_id: int):
     return db.query(models.ProgramRestriction).filter(
         models.ProgramRestriction.program_id == program_id
     ).all()
+def get_match_results(db: Session):
+    return db.query(models.MatchResult).all()
+
+def create_match_result(
+    db: Session,
+    loan_request_id: int,
+    program_id: int,
+    eligible: bool,
+    fit_score: int,
+    rejection_reason: str
+):
+    db_result = models.MatchResult(
+        loan_request_id=loan_request_id,
+        program_id=program_id,
+        eligible=eligible,
+        fit_score=fit_score,
+        rejection_reason=rejection_reason
+    )
+
+    db.add(db_result)
+    db.commit()
+    db.refresh(db_result)
+
+    return db_result
