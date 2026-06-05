@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import engine, SessionLocal
 from app.models import Base
 from app import schemas, crud
+from app.matching import evaluate_program
 
 
 #Create all tables defined in models.py if they don't already exist.
@@ -76,3 +77,56 @@ def get_lender_programs(db: Session = Depends(get_db)):
 @app.get("/loan-requests")
 def get_loan_requests(db: Session = Depends(get_db)):
     return crud.get_loan_requests(db)
+
+@app.post("/underwrite/{loan_request_id}")
+def run_underwriting(
+    loan_request_id: int,
+    db: Session = Depends(get_db)
+):
+    loan_request = crud.get_loan_request_by_id(
+        db,
+        loan_request_id
+    )
+
+    borrower = crud.get_borrower_by_id(
+        db,
+        loan_request.borrower_id
+    )
+
+    guarantor = crud.get_guarantor_by_borrower_id(
+        db,
+        borrower.id
+    )
+
+    business_credit = crud.get_business_credit_by_borrower_id(
+        db,
+        borrower.id
+    )
+
+    programs = crud.get_all_lender_programs(db)
+
+    results = []
+
+    for program in programs:
+        result = evaluate_program(
+            borrower,
+            guarantor,
+            business_credit,
+            loan_request,
+            program
+        )
+
+        results.append({
+            "program_id": program.id,
+            "program_name": program.name,
+            "eligible": result["eligible"],
+            "fit_score": result["fit_score"],
+            "reasons": result["reasons"]
+        })
+
+    results.sort(
+        key=lambda x: x["fit_score"],
+        reverse=True
+    )
+
+    return results

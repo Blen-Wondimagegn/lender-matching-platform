@@ -70,3 +70,33 @@ def get_lender_programs(db: Session):
 
 def get_loan_requests(db: Session):
     return db.query(models.LoanRequest).all()
+def get_loan_requests(db: Session):
+    return db.query(models.LoanRequest).all()
+
+
+def get_loan_request_by_id(db: Session, loan_request_id: int):
+    return db.query(models.LoanRequest).filter(
+        models.LoanRequest.id == loan_request_id
+    ).first()
+
+
+def get_borrower_by_id(db: Session, borrower_id: int):
+    return db.query(models.Borrower).filter(
+        models.Borrower.id == borrower_id
+    ).first()
+
+
+def get_business_credit_by_borrower_id(db: Session, borrower_id: int):
+    return db.query(models.BusinessCredit).filter(
+        models.BusinessCredit.borrower_id == borrower_id
+    ).first()
+
+
+def get_all_lender_programs(db: Session):
+    return db.query(models.LenderProgram).all()
+
+
+def get_guarantor_by_borrower_id(db: Session, borrower_id: int):
+    return db.query(models.Guarantor).filter(
+        models.Guarantor.borrower_id == borrower_id
+    ).first()
