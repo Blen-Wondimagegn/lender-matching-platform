@@ -7,12 +7,21 @@ from app.database import engine, SessionLocal
 from app.models import Base
 from app import schemas, crud
 from app.matching import evaluate_program
-
+from fastapi.middleware.cors import CORSMiddleware
 
 #Create all tables defined in models.py if they don't already exist.
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Lender Matching Platform API")
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 def get_db():
     db = SessionLocal()
     try:
