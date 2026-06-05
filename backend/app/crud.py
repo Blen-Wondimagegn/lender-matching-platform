@@ -1,7 +1,72 @@
-#Contains database functions like create, read, update, delete.
-fastapi
-uvicorn
-sqlalchemy
-psycopg2-binary
-python-dotenv
-pydantic
+#Contains database functions like create, read, update, delete(database actions)
+
+from sqlalchemy.orm import Session
+from app import models, schemas
+
+
+def create_borrower(db: Session, borrower: schemas.BorrowerCreate):
+    db_borrower = models.Borrower(**borrower.model_dump())
+    db.add(db_borrower)
+    db.commit()
+    db.refresh(db_borrower)
+    return db_borrower
+
+
+def create_guarantor(db: Session, guarantor: schemas.GuarantorCreate):
+    db_guarantor = models.Guarantor(**guarantor.model_dump())
+    db.add(db_guarantor)
+    db.commit()
+    db.refresh(db_guarantor)
+    return db_guarantor
+
+
+def create_business_credit(db: Session, credit: schemas.BusinessCreditCreate):
+    db_credit = models.BusinessCredit(**credit.model_dump())
+    db.add(db_credit)
+    db.commit()
+    db.refresh(db_credit)
+    return db_credit
+
+
+def create_loan_request(db: Session, loan: schemas.LoanRequestCreate):
+    db_loan = models.LoanRequest(**loan.model_dump())
+    db.add(db_loan)
+    db.commit()
+    db.refresh(db_loan)
+    return db_loan
+
+
+def create_lender(db: Session, lender: schemas.LenderCreate):
+    db_lender = models.Lender(**lender.model_dump())
+    db.add(db_lender)
+    db.commit()
+    db.refresh(db_lender)
+    return db_lender
+
+
+def create_lender_program(db: Session, program: schemas.LenderProgramCreate):
+    db_program = models.LenderProgram(**program.model_dump())
+    db.add(db_program)
+    db.commit()
+    db.refresh(db_program)
+    return db_program
+
+
+def create_program_restriction(db: Session, restriction: schemas.ProgramRestrictionCreate):
+    db_restriction = models.ProgramRestriction(**restriction.model_dump())
+    db.add(db_restriction)
+    db.commit()
+    db.refresh(db_restriction)
+    return db_restriction
+
+
+def get_lenders(db: Session):
+    return db.query(models.Lender).all()
+
+
+def get_lender_programs(db: Session):
+    return db.query(models.LenderProgram).all()
+
+
+def get_loan_requests(db: Session):
+    return db.query(models.LoanRequest).all()
