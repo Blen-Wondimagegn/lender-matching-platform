@@ -100,3 +100,7 @@ def get_guarantor_by_borrower_id(db: Session, borrower_id: int):
     return db.query(models.Guarantor).filter(
         models.Guarantor.borrower_id == borrower_id
     ).first()
+def get_restrictions_by_program_id(db: Session, program_id: int):
+    return db.query(models.ProgramRestriction).filter(
+        models.ProgramRestriction.program_id == program_id
+    ).all()

@@ -12,7 +12,8 @@ def evaluate_program(
         guarantor,
         business_credit,
         loan_request,
-        program
+        program,
+        restrictions
 ):
     reasons = []
     eligible = True
@@ -70,6 +71,55 @@ def evaluate_program(
             f"exceeds maximum "
             f"{program.max_equipment_age}"
         )
+
+        for restriction in restrictions:
+            restriction_type = restriction.restriction_type.lower()
+            restriction_value = restriction.value.lower()
+
+            if restriction_type == "state":
+                if borrower.state.lower() == restriction_value:
+                    eligible = False
+                    reasons.append(
+                        f"State {borrower.state} is restricted for this program"
+                    )
+
+            if restriction_type == "industry":
+                if borrower.industry.lower() == restriction_value:
+                    eligible = False
+                    reasons.append(
+                        f"Industry {borrower.industry} is excluded for this program"
+                    )
+
+            if restriction_type == "equipment":
+                if loan_request.equipment_type.lower() == restriction_value:
+                    eligible = False
+                    reasons.append(
+                        f"Equipment type {loan_request.equipment_type} is excluded for this program"
+                    )
+    for restriction in restrictions:
+        restriction_type = restriction.restriction_type.lower()
+        restriction_value = restriction.value.lower()
+
+        if restriction_type == "state":
+            if borrower.state.lower() == restriction_value:
+                eligible = False
+                reasons.append(
+                    f"State {borrower.state} is restricted for this program"
+                )
+
+        if restriction_type == "industry":
+            if borrower.industry.lower() == restriction_value:
+                eligible = False
+                reasons.append(
+                    f"Industry {borrower.industry} is excluded for this program"
+                )
+
+        if restriction_type == "equipment":
+            if loan_request.equipment_type.lower() == restriction_value:
+                eligible = False
+                reasons.append(
+                    f"Equipment type {loan_request.equipment_type} is excluded for this program"
+                )
     fit_score = 100
 
     if guarantor.fico_score > program.min_fico:

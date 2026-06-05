@@ -108,12 +108,18 @@ def run_underwriting(
     results = []
 
     for program in programs:
+        restrictions = crud.get_restrictions_by_program_id(
+            db,
+            program.id
+        )
+
         result = evaluate_program(
             borrower,
             guarantor,
             business_credit,
             loan_request,
-            program
+            program,
+            restrictions
         )
 
         results.append({
