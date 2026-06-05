@@ -1,4 +1,4 @@
-#Lists Python packages needed to run the backend.
+#Contains database functions like create, read, update, delete.
 fastapi
 uvicorn
 sqlalchemy

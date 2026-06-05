@@ -1,0 +1,1 @@
+#Defines request/response shapes for the API.
